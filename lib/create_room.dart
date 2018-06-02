@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'game_room.dart';
+import 'services.dart';
+import 'dart:async';
 
 class CreateRoomPage extends StatefulWidget {
   @override
@@ -8,13 +10,14 @@ class CreateRoomPage extends StatefulWidget {
 
 class _CreateRoomPageState extends State<CreateRoomPage> {
   final roomNameTextController = new TextEditingController();
-  final userNameTextController = new TextEditingController();
   final numberOfPlayersTextController = new TextEditingController();
 
   @override
   void dispose() {
     // Clean up the controller when the Widget is disposed
     super.dispose();
+    roomNameTextController.clear();
+    numberOfPlayersTextController.clear();
   }
 
   @override
@@ -38,14 +41,6 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
             ),
             new TextField(
               decoration: new InputDecoration(
-                  labelText: 'User name',
-                  border: InputBorder.none,
-                  hintText: 'Please enter your username'
-              ),
-              controller: userNameTextController,
-            ),
-            new TextField(
-              decoration: new InputDecoration(
                   labelText: 'Number of players',
                   border: InputBorder.none,
                   hintText: 'Max(4)'
@@ -55,9 +50,15 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
             new RaisedButton(
               child: new Text('Save'),
               onPressed: (){
-                Navigator.of(context).push(
-                  new MaterialPageRoute(builder: (context) => new GameRoomPage()),
-                );
+                Future future = createRoom(context, roomNameTextController.text, 
+                    numberOfPlayersTextController.text);
+                future.then((roomId) {
+                  int result = roomId as int;
+                  if (result != null){
+                    Navigator.of(context).push(
+                      new MaterialPageRoute(builder: (context) => new GameRoomPage()));
+                  }
+                });
               },
             )
           ],

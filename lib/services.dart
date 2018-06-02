@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:async';
 import 'package:http/http.dart' as http;
+
+class RoomResponse {
+  final bool success;
+  final int roomId;
+
+  RoomResponse({this.success, this.roomId});
+}
 
 final String usernameKey = "username";
 final String userIdKey = "userId";
@@ -21,11 +29,29 @@ void saveUsername(BuildContext context, String username) async {
   }
 }
 
+Future<int> createRoom(BuildContext context, String roomName,
+  String playersCount) async 
+{
+  Map<String, String> userMap = {"name": roomName, "maxPeople": playersCount};
+  String userData = json.encode(userMap); 
+  Map<String, String> lHeaders = {"Content-type": "application/json", 
+    "Accept": "application/json"};
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String userId = prefs.getInt(userIdKey).toString();
+  final response = await http.post(
+    'http://10.15.16.240:8080/room/create?userId=$userId', body: userData, 
+    headers: lHeaders);
+  if (response.statusCode == 200){
+      return int.parse(response.body);
+  }
+  return null;
+}
+
 void showUsernameDialog(BuildContext context) async
 {
     String username;
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //prefs.remove(usernameKey);
+    //prefs.remove(usernameKey);a
     if (prefs.getString(usernameKey) == null){
       showDialog(
         context: context,
