@@ -7,33 +7,6 @@ import 'create_room.dart';
 
 void main() => runApp(new MyApp());
 
-Future<Post> fetchPost() async {
-  final response =
-  await http.get('https://jsonplaceholder.typicode.com/posts/1');
-  final responseJson = json.decode(response.body);
-
-  //return null;
-  return new Post.fromJson(responseJson);
-}
-
-class Post {
-  final int userId;
-  final int id;
-  final String title;
-  final String body;
-
-  Post({this.userId, this.id, this.title, this.body});
-
-  factory Post.fromJson(Map<String, dynamic> json) {
-    return new Post(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
-      body: json['body'],
-    );
-  }
-}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -59,17 +32,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List rooms;
 
-  Future<String> getData() async {
+  Future getData() async {
     var response = await http.get(
         Uri.encodeFull("http://10.15.16.240:8080/room/getOpened"),
         headers: {"Accept": "application/json"});
 
     this.setState(() {
-      rooms = JSON.decode(response.body);
+      rooms = json.decode(response.body);
     });
-
-    return "Success!";
   }
+
+  //@override
+  //void initState(){
+    //this.getData();
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text(widget.title),
       ),
       body: new ListView.builder(
+          itemCount: rooms == null ? 0 : rooms.length,
           itemBuilder: (BuildContext context, int index){
             return new Card(
               child: new Text(rooms[index]["name"]),
@@ -86,9 +63,10 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
-          Navigator.of(context).push(
-            new MaterialPageRoute(builder: (context) => new CreateRoomPage()),
-          );
+          //Navigator.of(context).push(
+            //new MaterialPageRoute(builder: (context) => new CreateRoomPage()),
+          //);
+          getData();
         },
         tooltip: 'Increment',
         child: new Icon(Icons.add),
