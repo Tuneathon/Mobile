@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'create_room.dart';
+import 'game_room.dart';
 import 'services.dart';
 
 void main() => runApp(new MyApp());
@@ -66,6 +67,19 @@ class _MyHomePageState extends State<MyHomePage> {
               title: new Text(rooms[index]["name"]),
               subtitle: new Text(rooms[index]["currentPeople"].toString() + " / "
                 + rooms[index]["maxPeople"].toString()),
+                onTap: (){
+                  setState(() {
+                    Future future = joinRoom(context, rooms[index]["id"]);
+                    future.then((room){
+                      Room result = room as Room;
+                      if(result != null){
+                        Navigator.of(context).push(
+                      new MaterialPageRoute(builder: (context) => GameRoomPage(result)),
+                      );
+                      }
+                    });
+                  });
+                },
             );
           }
       ),
