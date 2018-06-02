@@ -5,7 +5,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'game_room.dart';
 import 'services.dart';
-import 'dart:async';
 
 class CreateRoomPage extends StatefulWidget {
   @override
@@ -79,7 +78,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
             )
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
