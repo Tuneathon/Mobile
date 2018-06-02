@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'dart:async';
+import 'dart:convert';
 import 'game_room.dart';
 
 class CreateRoomPage extends StatefulWidget {
@@ -10,6 +14,20 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
   final roomNameTextController = new TextEditingController();
   final userNameTextController = new TextEditingController();
   final numberOfPlayersTextController = new TextEditingController();
+
+  List rooms;
+
+  Future<String> getData() async {
+    var response = await http.get(
+        Uri.encodeFull("http://10.15.16.240:8080/room/getOpened"),
+        headers: {"Accept": "application/json"});
+
+    this.setState(() {
+      rooms = JSON.decode(response.body);
+    });
+
+    return "Success!";
+  }
 
   @override
   void dispose() {
@@ -32,32 +50,30 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
               decoration: new InputDecoration(
                   labelText: 'Room name',
                   border: InputBorder.none,
-                  hintText: 'Please enter room name'
-              ),
+                  hintText: 'Please enter room name'),
               controller: roomNameTextController,
             ),
             new TextField(
               decoration: new InputDecoration(
                   labelText: 'User name',
                   border: InputBorder.none,
-                  hintText: 'Please enter your username'
-              ),
+                  hintText: 'Please enter your username'),
               controller: userNameTextController,
             ),
             new TextField(
               decoration: new InputDecoration(
                   labelText: 'Number of players',
                   border: InputBorder.none,
-                  hintText: 'Max(4)'
-              ),
+                  hintText: 'Max(4)'),
               controller: numberOfPlayersTextController,
             ),
             new RaisedButton(
               child: new Text('Save'),
-              onPressed: (){
+              onPressed: () {
                 Navigator.of(context).push(
-                  new MaterialPageRoute(builder: (context) => new GameRoomPage()),
-                );
+                      new MaterialPageRoute(
+                          builder: (context) => new GameRoomPage()),
+                    );
               },
             )
           ],
