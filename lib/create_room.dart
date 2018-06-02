@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'dart:async';
+import 'dart:convert';
 import 'game_room.dart';
 import 'services.dart';
 import 'dart:async';
@@ -11,6 +15,20 @@ class CreateRoomPage extends StatefulWidget {
 class _CreateRoomPageState extends State<CreateRoomPage> {
   final roomNameTextController = new TextEditingController();
   final numberOfPlayersTextController = new TextEditingController();
+
+  List rooms;
+
+  Future<String> getData() async {
+    var response = await http.get(
+        Uri.encodeFull("http://10.15.16.240:8080/room/getOpened"),
+        headers: {"Accept": "application/json"});
+
+    this.setState(() {
+      rooms = JSON.decode(response.body);
+    });
+
+    return "Success!";
+  }
 
   @override
   void dispose() {
@@ -35,16 +53,14 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
               decoration: new InputDecoration(
                   labelText: 'Room name',
                   border: InputBorder.none,
-                  hintText: 'Please enter room name'
-              ),
+                  hintText: 'Please enter room name'),
               controller: roomNameTextController,
             ),
             new TextField(
               decoration: new InputDecoration(
                   labelText: 'Number of players',
                   border: InputBorder.none,
-                  hintText: 'Max(4)'
-              ),
+                  hintText: 'Max(4)'),
               controller: numberOfPlayersTextController,
             ),
             new RaisedButton(

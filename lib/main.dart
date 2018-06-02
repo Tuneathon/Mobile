@@ -9,10 +9,12 @@ import 'services.dart';
 void main() => runApp(new MyApp());
 
 Future<Post> fetchPost() async {
-    final response =
-    await http.get('https://jsonplaceholder.typicode.com/posts/1');
-    final responseJson = json.decode(response.body);
-    return new Post.fromJson(responseJson);
+  final response =
+  await http.get('https://jsonplaceholder.typicode.com/posts/1');
+  final responseJson = json.decode(response.body);
+
+  //return null;
+  return new Post.fromJson(responseJson);
 }
 
 class Post {
@@ -55,30 +57,33 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  List rooms;
+
+  Future<String> getData() async {
+    var response = await http.get(
+        Uri.encodeFull("http://10.15.16.240:8080/room/getOpened"),
+        headers: {"Accept": "application/json"});
+
+    this.setState(() {
+      rooms = JSON.decode(response.body);
+    });
+
+    return "Success!";
+  }
+
   @override
   Widget build(BuildContext context) {
-    showUsernameDialog(context);
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
       ),
-      body: new Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            new FutureBuilder<Post>(
-              future: fetchPost(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return new Text(snapshot.data.title);
-                } else if (snapshot.hasError) {
-                  return new Text("${snapshot.error}");
-                }
-                return new CircularProgressIndicator();
-              },
-            ),
-          ],
-        ),
+      body: new ListView.builder(
+          itemBuilder: (BuildContext context, int index){
+            return new Card(
+              child: new Text(rooms[index]["name"]),
+            );
+          }
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
