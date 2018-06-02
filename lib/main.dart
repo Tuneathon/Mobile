@@ -62,8 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
       body: new ListView.builder(
           itemCount: rooms == null ? 0 : rooms.length,
           itemBuilder: (BuildContext context, int index){
-            return new Card(
-              child: new Text(rooms[index]["name"]),
+            return new ListTile(
+              title: new Text(rooms[index]["name"]),
+              subtitle: new Text(rooms[index]["currentPeople"].toString() + " / "
+                + rooms[index]["maxPeople"].toString()),
             );
           }
       ),
