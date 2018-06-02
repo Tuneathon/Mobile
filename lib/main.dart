@@ -73,6 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
+  void initState(){
+    this.getData();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
