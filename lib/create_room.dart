@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'game_room.dart';
 
 class CreateRoomPage extends StatefulWidget {
   @override
@@ -54,15 +55,8 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
             new RaisedButton(
               child: new Text('Save'),
               onPressed: (){
-                return showDialog(
-                  context: context,
-                  builder: (context) {
-                    return new AlertDialog(
-                      // Retrieve the text the user has typed in using our
-                      // TextEditingController
-                      content: new Text(roomNameTextController.text),
-                    );
-                  },
+                Navigator.of(context).push(
+                  new MaterialPageRoute(builder: (context) => new GameRoomPage()),
                 );
               },
             )
