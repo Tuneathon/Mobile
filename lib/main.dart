@@ -45,9 +45,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    showUsernameDialog(context);
+    getData();
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.refresh),
+            onPressed: (){
+              getData();
+            },
+          )
+        ],
       ),
       body: new ListView.builder(
           itemCount: rooms == null ? 0 : rooms.length,
@@ -59,10 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: () {
-          //Navigator.of(context).push(
-            //new MaterialPageRoute(builder: (context) => new CreateRoomPage()),
-          //);
-          getData();
+          Navigator.of(context).push(
+            new MaterialPageRoute(builder: (context) => new CreateRoomPage()),
+          );
         },
         tooltip: 'Increment',
         child: new Icon(Icons.add),
