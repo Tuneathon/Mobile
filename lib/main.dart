@@ -5,6 +5,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'create_room.dart';
 import 'services.dart';
+//import 'game_question.dart';
+//import 'socket.dart';
 
 void main() => runApp(new MyApp());
 
@@ -33,6 +35,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List rooms;
 
+  @override
+  void initState() {
+    super.initState();
+    showUsernameDialog(context);
+    getData();
+  }
+
   Future getData() async {
     var response = await http.get(
         Uri.encodeFull("http://10.15.16.240:8080/room/getOpened"),
@@ -45,8 +54,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    showUsernameDialog(context);
-    getData();
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),
