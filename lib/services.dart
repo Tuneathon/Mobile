@@ -8,7 +8,6 @@ import 'game_question.dart';
 class RoomResponse {
   final bool success;
   final int roomId;
-
   RoomResponse({this.success, this.roomId});
 }
 
