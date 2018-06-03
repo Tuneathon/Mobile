@@ -106,9 +106,14 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
               stream: socket.stream,
               builder: (context, snapshot) {
                 String text = "Welcome";
-                if(snapshot.hasData) {
+                if(snapshot.hasData){
                   response = Response.fromJson(json.decode(snapshot.data));
-                  text = response.question;
+                  if (response.questionId != 0){
+                    text = response.question;
+                  }
+                  else{
+                    text = response.message;
+                  }
                 }
                 return new Text(text);
               },
