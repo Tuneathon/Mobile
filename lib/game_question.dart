@@ -79,7 +79,7 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
       vsync: this,
       duration: new Duration(seconds: kStartValue),
     );
-    _controller.forward();
+    //_controller.forward();
   }
 
   @override
@@ -110,6 +110,7 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
                   response = Response.fromJson(json.decode(snapshot.data));
                   if (response.questionId != 0){
                     text = response.question;
+                    _controller.forward();
                   }
                   else{
                     text = response.message;
@@ -122,8 +123,7 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
               controller: _textController,
               autofocus: true,
               decoration: new InputDecoration(
-                  labelText: 'Answer',
-                  border: InputBorder.none),
+                  labelText: 'Answer'),
             ),
             new RaisedButton(
               child: new Text('Save'),

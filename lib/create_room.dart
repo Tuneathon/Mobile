@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'dart:async';
-import 'dart:convert';
-import 'game_room.dart';
 import 'services.dart';
 import 'game_question.dart';
 
@@ -14,28 +11,13 @@ class CreateRoomPage extends StatefulWidget {
 
 class _CreateRoomPageState extends State<CreateRoomPage> {
   final roomNameTextController = new TextEditingController();
-  final numberOfPlayersTextController = new TextEditingController();
-
-  List rooms;
-
-  Future<String> getData() async {
-    var response = await http.get(
-        Uri.encodeFull("http://10.15.16.240:8080/room/getOpened"),
-        headers: {"Accept": "application/json"});
-
-    this.setState(() {
-      rooms = JSON.decode(response.body);
-    });
-
-    return "Success!";
-  }
+  String numberOfPlayers;
 
   @override
   void dispose() {
     // Clean up the controller when the Widget is disposed
     super.dispose();
     roomNameTextController.clear();
-    numberOfPlayersTextController.clear();
   }
 
   @override
@@ -49,31 +31,41 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
         child: new Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            new TextField(
+            new Center( 
+              child: new TextField(
               decoration: new InputDecoration(
                   labelText: 'Room name',
                   border: InputBorder.none,
                   hintText: 'Please enter room name'),
               controller: roomNameTextController,
-            ),
-            new TextField(
-              decoration: new InputDecoration(
-                  labelText: 'Number of players',
-                  border: InputBorder.none,
-                  hintText: 'Max(4)'),
-              controller: numberOfPlayersTextController,
-            ),
+            )),
+            new Container(
+              margin: const EdgeInsets.only(bottom: 10.0),
+              child: new DropdownButton<String>(
+                value: numberOfPlayers,
+                items: <String>['2', '3', '4', '5', '6', '7', '8'].map((String value) {
+                  return new DropdownMenuItem<String>(
+                    value: value,
+                    child: new Text(value),
+                  );
+                }).toList(),
+                hint: new Text("Number of players"),
+                onChanged: (String newValue) {
+                  setState(() {
+                      numberOfPlayers = newValue;
+                  });
+                },
+            )),
             new RaisedButton(
               child: new Text('Save'),
               onPressed: (){
                 Future future = createRoom(context, roomNameTextController.text, 
-                    numberOfPlayersTextController.text);
+                    numberOfPlayers);
                 future.then((roomId) {
                     Room room = new Room();
                     room.roomId = roomId;
-                    Navigator.of(context).push(
+                    Navigator.of(context).pushReplacement(
                       new MaterialPageRoute(builder: (context) => new GameQuestionPage(room)));
-                  
                 });
               },
             )
