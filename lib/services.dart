@@ -11,6 +11,46 @@ class RoomResponse {
   RoomResponse({this.success, this.roomId});
 }
 
+class Room {
+  int roomId;
+  String status;
+  int maxPeople;
+  int currentPeople;
+  String roomName;
+  String hostName;
+  List userList;
+
+  Room({this.roomId, this.status, this.maxPeople, this.currentPeople, this.roomName, this.hostName, this.userList});
+
+  factory Room.fromJson(Map<String,dynamic> json){
+    return new Room(
+      roomId: json['id'],
+      status: json['status'],
+      maxPeople: json['maxPeople'],
+      currentPeople: json['currentPeople'],
+      roomName: json['name'],
+      hostName: json['hostName'],
+      userList: json['userList'],
+    );
+  }
+}
+
+class Question{
+  int id;
+  String question;
+  String answer;
+
+  Question({this.id, this.question, this.answer});
+
+  factory Question.fromJson(Map<String,dynamic> json){
+    return new Question(
+      id: json['id'],
+      question: json['question'],
+      answer: json['answer'],
+    );
+  }
+}
+
 final String usernameKey = "username";
 final String userIdKey = "userId";
 
@@ -27,6 +67,24 @@ void saveUsername(BuildContext context, String username) async {
       await prefs.setInt(userIdKey, int.parse(response.body));
       Navigator.pop(context);
   }
+}
+
+Future<Room> joinRoom(BuildContext context, int roomId) async{
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String userId = prefs.getInt(userIdKey).toString();
+  final response = await http.post('http://10.15.16.240:8080/room/join?roomId=$roomId&userId=$userId');
+  if(response.statusCode == 200){
+    return json.decode(response.body);
+  }
+  return null;
+}
+
+Future<List<Question>> getQuestions(BuildContext context, int roomId) async {
+  final response = await http.get('http://10.15.16.240:8080/room/getQuestions?roomId=$roomId');
+  if(response.statusCode == 200){
+    return json.decode(response.body);
+  }
+  return null;
 }
 
 Future<int> createRoom(BuildContext context, String roomName,
@@ -46,6 +104,8 @@ Future<int> createRoom(BuildContext context, String roomName,
   }
   return null;
 }
+
+
 
 void showUsernameDialog(BuildContext context) async
 {

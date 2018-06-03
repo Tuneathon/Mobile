@@ -9,6 +9,8 @@ import 'services.dart';
 
 void main() => runApp(new MyApp());
 
+bool isCalled = false;
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -45,9 +47,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    showUsernameDialog(context);
+  void initState() {
+    super.initState();
+    if(!isCalled){
+      showUsernameDialog(context);
+      isCalled = true;
+    }
     getData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(widget.title),

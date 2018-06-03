@@ -70,8 +70,10 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                 future.then((roomId) {
                   int result = roomId as int;
                   if (result != null){
+                    Room room;
+                    room.roomId = result;
                     Navigator.of(context).push(
-                      new MaterialPageRoute(builder: (context) => new GameRoomPage()));
+                      new MaterialPageRoute(builder: (context) => new GameRoomPage(room)));
                   }
                 });
               },
