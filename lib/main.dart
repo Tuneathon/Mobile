@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'create_room.dart';
 import 'game_room.dart';
 import 'services.dart';
+import 'game_question.dart';
 //import 'game_question.dart';
 //import 'socket.dart';
 
@@ -81,12 +82,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 + rooms[index]["maxPeople"].toString()),
                 onTap: (){
                   setState(() {
-                    Future future = joinRoom(context, rooms[index]["id"]);
+                    Future<Room> future = joinRoom(context, rooms[index]["id"]);
                     future.then((room){
-                      Room result = room as Room;
-                      if(result != null){
+                      if(room != null){
                         Navigator.of(context).push(
-                      new MaterialPageRoute(builder: (context) => GameRoomPage(result)),
+                      new MaterialPageRoute(builder: (context) => GameQuestionPage(room)),
                       );
                       }
                     });

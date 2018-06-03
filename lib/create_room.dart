@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'game_room.dart';
 import 'services.dart';
+import 'game_question.dart';
 
 class CreateRoomPage extends StatefulWidget {
   @override
@@ -68,13 +69,11 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                 Future future = createRoom(context, roomNameTextController.text, 
                     numberOfPlayersTextController.text);
                 future.then((roomId) {
-                  int result = roomId as int;
-                  if (result != null){
-                    Room room;
-                    room.roomId = result;
+                    Room room = new Room();
+                    room.roomId = roomId;
                     Navigator.of(context).push(
-                      new MaterialPageRoute(builder: (context) => new GameRoomPage(room)));
-                  }
+                      new MaterialPageRoute(builder: (context) => new GameQuestionPage(room)));
+                  
                 });
               },
             )

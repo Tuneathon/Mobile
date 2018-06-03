@@ -1,17 +1,80 @@
 import 'package:flutter/material.dart';
+import 'services.dart';
+import 'dart:convert';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 class GameQuestionPage extends StatefulWidget{
+  final Room room;
+  GameQuestionPage(this.room);
   @override
-  _GameRoomQuestionState createState() => new _GameRoomQuestionState();
+  _GameRoomQuestionState createState() => new _GameRoomQuestionState(room);
+}
+
+class Response {
+  final String question;
+  final int questionId;
+  final String message;
+  final List usersList;
+
+  Response({this.question, this.questionId, this.message, this.usersList});
+
+  factory Response.fromJson(Map<String, dynamic> json) {
+    return new Response(
+      question: json['question'],
+      questionId: json['questionId'],
+      message: json['message'],
+      usersList: json['users'],
+    );
+  }
+}
+
+class Request {
+  bool joinReq;
+  String answer;
+  int questionId;
+  int userId;
+  int roomId;
+
+  Request({this.joinReq, this.answer, this.questionId, this.userId, this.roomId});
+
+  Map<String, dynamic> toJson() =>
+  {
+      'joinReq': joinReq,
+      'answer': answer,
+      'questionId': questionId,
+      'userId': userId,
+      'roomId': roomId
+  };
+
+  factory Request.fromJson(Map<String, dynamic> json) {
+    return new Request(
+      joinReq: json['joinReq'],
+      answer: json['answer'],
+      questionId: json['questionId'],
+      userId: json['userId'],
+      roomId: json['roomId'],
+    );
+  }
 }
 
 class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProviderStateMixin{
+  Room room;
+  _GameRoomQuestionState(this.room);
   AnimationController _controller;
   static const int kStartValue = 30;
+  var socket;
+  Response response;
+  TextEditingController _textController = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    socket = new IOWebSocketChannel.connect('ws://10.15.16.240:8080/trivia/websocket?roomId=${room.roomId}');
+    response = new Response();
+    _sendMessage(true);
     _controller = new AnimationController(
       vsync: this,
       duration: new Duration(seconds: kStartValue),
@@ -39,10 +102,19 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
                 ).animate(_controller),
               ),
             ),
-            new Text(
-              "question 1"
+              new StreamBuilder(
+              stream: socket.stream,
+              builder: (context, snapshot) {
+                String text = "Welcome";
+                if(snapshot.hasData) {
+                  response = json.decode(snapshot.data);
+                  text = response.question;
+                }
+                return new Text(text);
+              },
             ),
             new TextField(
+              controller: _textController,
               autofocus: true,
               decoration: new InputDecoration(
                   labelText: 'Answer',
@@ -51,14 +123,29 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
             new RaisedButton(
               child: new Text('Save'),
               onPressed: (){
-              },
+                _sendMessage(false);
+                },
             )
           ],
         ),
       )
     );
   }
+
+    void _sendMessage(bool joinReq) async {
+      Request req = new Request();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      req.joinReq = joinReq;
+      req.userId = prefs.getInt(userIdKey);
+      req.roomId = this.room.roomId;
+      req.answer = this._textController.text;
+      req.questionId = this.response.questionId;
+
+      socket.sink.add(json.encode(req));
+    
+  }
 }
+
 
 class Countdown extends AnimatedWidget {
   Countdown({ Key key, this.animation }) : super(key: key, listenable: animation);

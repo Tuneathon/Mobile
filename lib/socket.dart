@@ -54,6 +54,7 @@ class _SocketPageState extends State<SocketPage> {
                 return new Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   child: new Text(snapshot.hasData ? '${snapshot.data}' : ''),
+
                 );
               },
             )
@@ -62,6 +63,7 @@ class _SocketPageState extends State<SocketPage> {
       ),
       floatingActionButton: new FloatingActionButton(
         onPressed: _sendMessage,
+        
         tooltip: 'Send message',
         child: new Icon(Icons.send),
       ), // This trailing comma makes auto-formatting nicer for build methods.

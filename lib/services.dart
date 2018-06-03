@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'game_question.dart';
 
 class RoomResponse {
   final bool success;
@@ -74,7 +75,7 @@ Future<Room> joinRoom(BuildContext context, int roomId) async{
   String userId = prefs.getInt(userIdKey).toString();
   final response = await http.post('http://10.15.16.240:8080/room/join?roomId=$roomId&userId=$userId');
   if(response.statusCode == 200){
-    return json.decode(response.body);
+    return Room.fromJson(json.decode(response.body));
   }
   return null;
 }
