@@ -107,7 +107,7 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
               builder: (context, snapshot) {
                 String text = "Welcome";
                 if(snapshot.hasData) {
-                  response = json.decode(snapshot.data);
+                  response = Response.fromJson(json.decode(snapshot.data));
                   text = response.question;
                 }
                 return new Text(text);
