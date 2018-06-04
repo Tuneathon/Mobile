@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'services.dart';
 import 'dart:convert';
-import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+import 'ranking.dart';
 
 class GameQuestionPage extends StatefulWidget{
   final Room room;
@@ -113,10 +113,17 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
                     questionId = tempResponse.questionId;
                     _controller.reset();
                     _controller.forward();
+                    _textController.clear();
                     message = "";
                   }
                   else{
                     message = tempResponse.message;
+                    if (message == "The game end !")
+                    {
+                      //socket.sink.close();
+                      /*Navigator.of(context).push(
+                        new MaterialPageRoute(builder: (context) => new RankingPage(tempResponse.usersList)));*/
+                    }
                   }
                 }
                 return new Column(
@@ -160,6 +167,7 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
       req.questionId = this.questionId;
 
       socket.sink.add(json.encode(req));
+      _textController.clear();
   }
 }
 
