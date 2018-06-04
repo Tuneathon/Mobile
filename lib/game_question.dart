@@ -112,8 +112,11 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
                     question = tempResponse.question;
                     questionId = tempResponse.questionId;
                     _controller.forward();
+                    message = "";
                   }
-                  message = tempResponse.message;
+                  else{
+                    message = tempResponse.message;
+                  }
                 }
                 return new Column(
                   mainAxisAlignment: MainAxisAlignment.start,
