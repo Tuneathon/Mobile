@@ -41,21 +41,24 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
             )),
             new Container(
               margin: const EdgeInsets.only(bottom: 10.0),
-              child: new DropdownButton<String>(
-                value: numberOfPlayers,
-                items: <String>['2', '3', '4', '5', '6', '7', '8'].map((String value) {
-                  return new DropdownMenuItem<String>(
-                    value: value,
-                    child: new Text(value),
-                  );
-                }).toList(),
-                hint: new Text("Number of players"),
-                onChanged: (String newValue) {
-                  setState(() {
-                      numberOfPlayers = newValue;
-                  });
-                },
-            )),
+              child: DropdownButtonHideUnderline(
+                child: ButtonTheme(
+                alignedDropdown: false,
+                child: new DropdownButton<String>(
+                  value: numberOfPlayers,
+                  items: <String>['2', '3', '4', '5', '6', '7', '8'].map((String value) {
+                    return new DropdownMenuItem<String>(
+                      value: value,
+                      child: new Text(value),
+                    );
+                  }).toList(),
+                  hint: new Text("Number of players"),
+                  onChanged: (String newValue) {
+                    setState(() {
+                        numberOfPlayers = newValue;
+                    });
+                  },
+              )))),
             new RaisedButton(
               child: new Text('Save'),
               onPressed: (){

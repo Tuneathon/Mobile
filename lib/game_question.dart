@@ -66,14 +66,13 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
   AnimationController _controller;
   static const int kStartValue = 30;
   var socket;
-  Response response;
+  int questionId;
   TextEditingController _textController = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
     socket = new IOWebSocketChannel.connect('ws://10.15.16.240:8080/trivia/websocket?roomId=${room.roomId}');
-    response = new Response();
     _sendMessage(true);
     _controller = new AnimationController(
       vsync: this,
@@ -105,18 +104,23 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
               new StreamBuilder(
               stream: socket.stream,
               builder: (context, snapshot) {
-                String text = "Welcome";
+                String question = "";
+                String message = "Welcome";
                 if(snapshot.hasData){
-                  response = Response.fromJson(json.decode(snapshot.data));
-                  if (response.questionId != 0){
-                    text = response.question;
+                  Response tempResponse = Response.fromJson(json.decode(snapshot.data));
+                  if (tempResponse.questionId != 0){
+                    question = tempResponse.question;
+                    questionId = tempResponse.questionId;
                     _controller.forward();
                   }
-                  else{
-                    text = response.message;
-                  }
+                  message = tempResponse.message;
                 }
-                return new Text(text);
+                return new Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    new Text(question),
+                    new Text(message)
+                  ]);
               },
             ),
             new Container(
@@ -146,10 +150,9 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
       req.userId = prefs.getInt(userIdKey);
       req.roomId = this.room.roomId;
       req.answer = this._textController.text;
-      req.questionId = this.response.questionId;
+      req.questionId = this.questionId;
 
       socket.sink.add(json.encode(req));
-    
   }
 }
 
