@@ -67,6 +67,7 @@ class _CreateRoomPageState extends State<CreateRoomPage> {
                 future.then((roomId) {
                     Room room = new Room();
                     room.roomId = roomId;
+                    room.roomName = roomNameTextController.text;
                     Navigator.of(context).pushReplacement(
                       new MaterialPageRoute(builder: (context) => new GameQuestionPage(room)));
                 });

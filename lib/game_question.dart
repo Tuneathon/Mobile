@@ -65,6 +65,7 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
   _GameRoomQuestionState(this.room);
   AnimationController _controller;
   static const int kStartValue = 30;
+  String question = "";
   var socket;
   int questionId;
   TextEditingController _textController = new TextEditingController();
@@ -85,7 +86,7 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
-          title: new Text("Game Question"),
+          title: new Text(room.roomName),
         ),
       body: new Container(
         margin: const EdgeInsets.only(left: 20.0, right: 20.0),
@@ -104,13 +105,13 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
               new StreamBuilder(
               stream: socket.stream,
               builder: (context, snapshot) {
-                String question = "";
                 String message = "Welcome";
                 if(snapshot.hasData){
                   Response tempResponse = Response.fromJson(json.decode(snapshot.data));
                   if (tempResponse.questionId != 0){
                     question = tempResponse.question;
                     questionId = tempResponse.questionId;
+                    _controller.reset();
                     _controller.forward();
                     message = "";
                   }
@@ -122,7 +123,10 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     new Text(question),
-                    new Text(message)
+                    new Text(message,
+                      style: new TextStyle(
+                        color: new Color(0xFF2439AD)
+                      ))
                   ]);
               },
             ),
