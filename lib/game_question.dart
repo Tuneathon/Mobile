@@ -119,12 +119,14 @@ class _GameRoomQuestionState extends State<GameQuestionPage> with TickerProvider
                 return new Text(text);
               },
             ),
-            new TextField(
+            new Container(
+              margin: const EdgeInsets.only(bottom: 20.0),
+              child: new TextField(
               controller: _textController,
               autofocus: true,
               decoration: new InputDecoration(
                   labelText: 'Answer'),
-            ),
+            )),
             new RaisedButton(
               child: new Text('Save'),
               onPressed: (){
